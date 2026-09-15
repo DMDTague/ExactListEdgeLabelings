@@ -1,0 +1,564 @@
+name: Lean build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  prebuild-1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Source formalization audit
+        run: python3 scripts/check_formalization.py --inventory formalization-inventory.json
+      - name: Build root imports 1-40
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(sed -n '1,40{s/^import //p}' BachThesisLean.lean)
+          lake build "${modules[@]}"
+      - name: Pack stage 1 build state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload stage 1 build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-1-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  prebuild-2:
+    needs: prebuild-1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download previous build state
+        uses: actions/download-artifact@v4
+        with:
+          name: stage-1-build
+          path: .ci-cache
+      - name: Restore previous build state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build root imports 41-80
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(sed -n '41,80{s/^import //p}' BachThesisLean.lean)
+          lake build "${modules[@]}"
+      - name: Pack stage 2 build state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload stage 2 build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-2-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  prebuild-3:
+    needs: prebuild-2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download previous build state
+        uses: actions/download-artifact@v4
+        with:
+          name: stage-2-build
+          path: .ci-cache
+      - name: Restore previous build state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build root imports 81-120
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(sed -n '81,120{s/^import //p}' BachThesisLean.lean)
+          lake build "${modules[@]}"
+      - name: Pack stage 3 build state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload stage 3 build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-3-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  prebuild-4:
+    needs: prebuild-3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download previous build state
+        uses: actions/download-artifact@v4
+        with:
+          name: stage-3-build
+          path: .ci-cache
+      - name: Restore previous build state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build root imports 121-160
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(sed -n '121,160{s/^import //p}' BachThesisLean.lean)
+          lake build "${modules[@]}"
+      - name: Pack stage 4 build state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload stage 4 build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage-4-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  heawood-base:
+    needs: prebuild-4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download stage 4 build state
+        uses: actions/download-artifact@v4
+        with:
+          name: stage-4-build
+          path: .ci-cache
+      - name: Restore stage 4 build state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build BadMaskSquareCover and Heawood core
+        run: |
+          lake build BachThesisLean.Cubic.BadMaskSquareCover
+          lake build BachThesisLean.Cubic.HeawoodCore
+      - name: Pack Heawood base state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload Heawood base state
+        uses: actions/upload-artifact@v4
+        with:
+          name: heawood-base-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  heawood-check-01:
+    needs: heawood-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download Heawood base state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-base-build
+          path: .ci-cache
+      - name: Restore Heawood base state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build HeawoodCheck01
+        run: lake build BachThesisLean.Cubic.HeawoodCheck01
+      - name: Pack HeawoodCheck01 state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload HeawoodCheck01 state
+        uses: actions/upload-artifact@v4
+        with:
+          name: heawood-check-01-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  heawood-check-23:
+    needs: heawood-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download Heawood base state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-base-build
+          path: .ci-cache
+      - name: Restore Heawood base state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build HeawoodCheck23
+        run: lake build BachThesisLean.Cubic.HeawoodCheck23
+      - name: Pack HeawoodCheck23 state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload HeawoodCheck23 state
+        uses: actions/upload-artifact@v4
+        with:
+          name: heawood-check-23-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  heawood-check-45:
+    needs: heawood-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download Heawood base state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-base-build
+          path: .ci-cache
+      - name: Restore Heawood base state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build HeawoodCheck45
+        run: lake build BachThesisLean.Cubic.HeawoodCheck45
+      - name: Pack HeawoodCheck45 state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload HeawoodCheck45 state
+        uses: actions/upload-artifact@v4
+        with:
+          name: heawood-check-45-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  heawood-check-6:
+    needs: heawood-base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download Heawood base state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-base-build
+          path: .ci-cache
+      - name: Restore Heawood base state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build HeawoodCheck6
+        run: lake build BachThesisLean.Cubic.HeawoodCheck6
+      - name: Pack HeawoodCheck6 state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload HeawoodCheck6 state
+        uses: actions/upload-artifact@v4
+        with:
+          name: heawood-check-6-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  tail-build:
+    needs:
+      - heawood-check-01
+      - heawood-check-23
+      - heawood-check-45
+      - heawood-check-6
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download Heawood base state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-base-build
+          path: .ci-cache/base
+      - name: Download Heawood check 01 state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-check-01-build
+          path: .ci-cache/check01
+      - name: Download Heawood check 23 state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-check-23-build
+          path: .ci-cache/check23
+      - name: Download Heawood check 45 state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-check-45-build
+          path: .ci-cache/check45
+      - name: Download Heawood check 6 state
+        uses: actions/download-artifact@v4
+        with:
+          name: heawood-check-6-build
+          path: .ci-cache/check6
+      - name: Merge Heawood build states
+        shell: bash
+        run: |
+          set -euo pipefail
+          tar -xzf .ci-cache/base/stage-build.tar.gz
+          tar -xzf .ci-cache/check01/stage-build.tar.gz
+          tar -xzf .ci-cache/check23/stage-build.tar.gz
+          tar -xzf .ci-cache/check45/stage-build.tar.gz
+          tar -xzf .ci-cache/check6/stage-build.tar.gz
+      - name: Build Heawood case
+        run: lake build BachThesisLean.Cubic.HeawoodCase
+      - name: Build remaining root imports
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t modules < <(sed -n '163,$s/^import //p' BachThesisLean.lean)
+          lake build "${modules[@]}"
+      - name: Pack complete import build state
+        run: tar -czf stage-build.tar.gz .lake/build
+      - name: Upload complete import build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-imports-build
+          path: stage-build.tar.gz
+          if-no-files-found: error
+
+  root-build:
+    needs: tail-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download complete import build state
+        uses: actions/download-artifact@v4
+        with:
+          name: all-imports-build
+          path: .ci-cache
+      - name: Restore complete import build state
+        run: tar -xzf .ci-cache/stage-build.tar.gz
+      - name: Build BachThesisLean
+        shell: bash
+        run: |
+          set -o pipefail
+          lake build 2>&1 | tee lean-build.log
+      - name: Upload Lean build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lean-build-log
+          path: lean-build.log
+          if-no-files-found: warn
+      - name: Pack root build state
+        run: tar -czf root-build.tar.gz .lake/build
+      - name: Upload root build state
+        uses: actions/upload-artifact@v4
+        with:
+          name: root-local-build
+          path: root-build.tar.gz
+          if-no-files-found: error
+
+  kernel-audit:
+    needs: root-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lean toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf \
+            | sh -s -- -y --default-toolchain none
+          export PATH="$HOME/.elan/bin:$PATH"
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          toolchain="$(cat lean-toolchain)"
+          elan toolchain install "$toolchain"
+          elan default "$toolchain"
+          lean --version
+          lake --version
+      - name: Resolve pinned Lake dependencies
+        run: |
+          lake update
+          git diff --exit-code -- lake-manifest.json
+      - name: Download Mathlib build cache
+        run: lake exe cache get
+      - name: Download certified root state
+        uses: actions/download-artifact@v4
+        with:
+          name: root-local-build
+          path: .ci-cache
+      - name: Restore certified root state
+        run: tar -xzf .ci-cache/root-build.tar.gz
+      - name: Kernel axiom audit
+        run: lake env lean Verification.lean

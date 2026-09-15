@@ -1,0 +1,9 @@
+.lake/
+build/
+*.olean
+*.ilean
+*.c
+*.cpp
+.DS_Store
+tmp/
+__pycache__/
