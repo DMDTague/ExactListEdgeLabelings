@@ -1,4 +1,4 @@
-.PHONY: verify source-audit build kernel-audit paper clean
+.PHONY: verify source-audit build kernel-audit small-checks clean
 
 source-audit:
 	python3 scripts/check_formalization.py
@@ -11,9 +11,8 @@ kernel-audit:
 
 verify: source-audit build kernel-audit
 
-paper:
-	cd paper && latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+small-checks:
+	python3 checks/independent_small_checks.py
 
 clean:
 	lake clean
-	cd paper && latexmk -C main.tex || true
