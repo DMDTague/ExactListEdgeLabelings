@@ -113,7 +113,7 @@ The staged workflow is used because the complete rooted library is large.
 
 ## Archival release
 
-The publication snapshot is **v1.0.0**. The release candidate's complete Lean build and kernel audit passed in GitHub Actions; the audit covered 1,312 public source-visible theorem constants and 580 public source-visible definition/opaque constants (2,249 theorem constants total). The Zenodo DOI and the paper's arXiv identifier will be added here and to the manuscript once minted.
+The publication snapshot is **v1.0.0**. Its archival record is identified by **doi:10.5281/zenodo.23017269**. The release candidate's complete Lean build and kernel audit passed in GitHub Actions; the audit covered 1,312 public source-visible theorem constants and 580 public source-visible definition/opaque constants (2,249 theorem constants total). The paper's arXiv identifier will be added once assigned.
 
 ## License
 
