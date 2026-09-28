@@ -49,7 +49,6 @@ The exact formalization boundary is documented in `docs/FORMALIZATION_SCOPE.md` 
 - `docs/FORMALIZATION_SCOPE.md` — theorem-by-theorem scope of the formalization.
 - `docs/VERIFICATION.md` — verification contract and trust boundary.
 - `KNOWN_GAPS.md` — explicit boundaries, external inputs, helper proposition targets, and open conjectures.
-- `paper/main.tex` — publication manuscript source.
 - `.github/workflows/lean.yml` — complete staged CI build and kernel audit.
 
 The historical Lean namespace `BachThesisLean` is retained for source stability; the publication repository and manuscript are identified as **ExactListEdgeLabelings**.
@@ -76,12 +75,6 @@ make verify
 ```
 
 runs the source audit, the complete Lean build, and the kernel audit.
-
-To build the manuscript locally:
-
-```bash
-make paper
-```
 
 ## Formalization scope
 
