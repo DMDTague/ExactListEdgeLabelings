@@ -1,0 +1,15 @@
+R_(3,2): c3=48 (paper 48), N=112 (paper 112)
+R_(3,3): c3=192 (paper 192), N=384 (paper 384)
+cycle ACBC -> 6
+cycle ACCBC -> 6
+cycle ACBCC -> 6
+cycle ACCBCC -> 6
+cycle AB -> 2
+cycle ABC -> 4
+cycle ACAC -> 2
+cycle AABB -> 2
+Ex 3.1: 4 2
+path u x1 y x2 v: 3 2
+crown n=3: c=2 V_n=(n-1)!rho_n=2, N=4 rho_(n+1)=4
+crown n=4: c=24 V_n=(n-1)!rho_n=24, N=56 rho_(n+1)=56
+random uncrossing trials: 400 violations: 0
