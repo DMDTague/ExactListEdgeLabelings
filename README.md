@@ -46,6 +46,8 @@ The exact formalization boundary is documented in `docs/FORMALIZATION_SCOPE.md` 
 - `BachThesisLean.lean` — root import for the complete formalized library.
 - `Verification.lean` — transitive kernel-axiom audit of the public theorem/definition layer.
 - `scripts/check_formalization.py` — source-hygiene, proposition-target, and import-coverage audit.
+- `checks/independent_small_checks.py` — representative exact-count and uncrossing sanity checks; none is used in a proof.
+- `outputs/independent_small_checks.txt` — recorded output of those supplementary checks.
 - `docs/FORMALIZATION_SCOPE.md` — theorem-by-theorem scope of the formalization.
 - `docs/VERIFICATION.md` — verification contract and trust boundary.
 - `KNOWN_GAPS.md` — explicit boundaries, external inputs, helper proposition targets, and open conjectures.
@@ -75,6 +77,12 @@ make verify
 ```
 
 runs the source audit, the complete Lean build, and the kernel audit.
+
+For the supplementary finite sanity checks:
+
+```bash
+make small-checks
+```
 
 ## Formalization scope
 
@@ -111,6 +119,6 @@ A versioned release of this repository is intended to be archived on Zenodo. The
 
 The Lean/Python/build code is licensed under the MIT License; see `LICENSE-CODE`.
 
-The manuscript and other authored textual material are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0); see `LICENSE-TEXT`.
+Repository documentation and other authored textual material are licensed under Creative Commons Attribution 4.0 International (CC BY 4.0); see `LICENSE-TEXT`.
 
 The root `LICENSE` file summarizes the split licensing.
