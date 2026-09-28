@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use these formalization or reproducibility materials, please cite the accompanying paper and the archived software release."
+title: "ExactListEdgeLabelings: Lean 4 formalization and reproducibility materials"
+type: software
+authors:
+  - family-names: Tague
+    given-names: Dylan
+repository-code: "https://github.com/DMDTague/ExactListEdgeLabelings"
+license: MIT
+keywords:
+  - combinatorics
+  - graph theory
+  - bipartite multigraphs
+  - list edge coloring
+  - uncrossing
+  - Lean 4
+  - formal verification
