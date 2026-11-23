@@ -1,0 +1,15 @@
+Proposition 6.1 (A_k family)
+  k=3: 2-factors containing T = 2, with T on one cycle = 0  [OK]
+  k=4: 2-factors containing T = 8, with T on one cycle = 0  [OK]
+  k=5: 2-factors containing T = 24, with T on one cycle = 0  [OK]
+  k=6: 2-factors containing T = 56, with T on one cycle = 0  [OK]
+  k=7: 2-factors containing T = 110, with T on one cycle = 0  [OK]
+Proposition 6.2 (12-vertex simple cubic graph)
+  perfect matchings avoiding T: 4
+  2-factors containing T = 4, with T on one cycle = 0
+  10-cycle valid: True, contains T: True, conformal: True
+Computation 6.3 (exhaustive search, simple cubic bipartite, 6, 8 and 10 vertices)
+  6 vertices: ordered factorizations 2, distinct edge sets with fixed identity matching 1, 3-edge matching instances 12, examples found 0
+  8 vertices: ordered factorizations 24, distinct edge sets with fixed identity matching 9, 3-edge matching instances 1056, examples found 0
+  10 vertices: ordered factorizations 552, distinct edge sets with fixed identity matching 216, 3-edge matching instances 80040, examples found 0
+All checks passed.
